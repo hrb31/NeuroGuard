@@ -43,10 +43,23 @@ Do not run an old remote notebook and mistake it for these changes.
 6. Download version 2 via KaggleHub, **inside Colab only**. If required, set a
    `KAGGLE_API_TOKEN` Colab secret from https://www.kaggle.com/settings/api or use
    `kagglehub.login()` with its hidden prompt. Do not send tokens back for debugging.
-7. Run full audit, save the detailed report and print proposed split counts.
+7. Resolve the canonical dataset directory, then audit and print proposed split
+   counts. Kaggle's extracted wrapper may include both `kaggle_3m/` and
+   `lgg-mri-segmentation/kaggle_3m/`. The resolver compares every relative TIFF
+   filename and SHA256 hash in each copy (images AND masks). Only identical copies
+   allow selection of one root, preferring the shallowest path then lexical order.
+   Missing, extra or changed TIFFs cause an integrity error, not silent selection.
+   Unassigned TIFFs and overlapping roots also require review. No raw files are
+   deleted/changed. `root_resolution.json` saves candidate paths and per-file hashes.
+   All subsequent audit, previews/preprocessing and freeze operations use that same
+   `DATA_ROOT`. Duplicate detection inside it remains unchanged.
 8. Review training-only channel images, masks, overlays and processed examples.
    Consult release documentation to establish channel meanings. Channel equality
    and appearance alone cannot prove modalities or FLAIR channel position.
+   Pause here for review before running section 9. Expected unique counts are
+   110 patients, 3,929 images/masks, 1,373 positive and 2,556 empty slices; these
+   remain expectations until the corrected real-data audit calculates them. Do
+   not modify counts or pick a root because its totals match these expectations.
 9. Add honest review notes and freeze the split. Any missing/corrupted pair blocks
    freezing. Cross-patient nonblank image duplicates require resolution and a
    fresh audit. All-zero background duplicates may be explicitly reviewed. Never
@@ -63,6 +76,10 @@ After reset, repeat sections 1-10 with the same commit and Drive folder. Section
 re-audits files and verifies the existing immutable manifest before reusing it.
 Code revisions get separate run directories; the dataset split remains shared and
 frozen. Review warnings/errors instead of deleting a manifest to bypass them.
+For this directory-resolution fix, use the updated notebook in a clean runtime
+after the new code is approved and pushed. Rerun sections 1-8, return the root
+comparison summary, audit counts and figures, then review before freezing. Old
+wrapper-based audit reports remain historical evidence, not the canonical audit.
 
 Colab source edits do not update the local checkout. If an experimental fix is
 needed, apply it locally, review/commit/push with approval, and reopen at the new

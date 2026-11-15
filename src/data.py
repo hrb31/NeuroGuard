@@ -32,7 +32,11 @@ def read_pair(root, row):
 
 
 def audit_dataset(root):
-    """Inspect every TIFF; retain errors instead of silently skipping bad pairs."""
+    """Inspect every TIFF under the resolved canonical root; never deduplicate here.
+
+    Call acquisition.resolve_dataset_root on a Kaggle download wrapper first.
+    Pairing errors and duplicate detection within this root remain strict.
+    """
     root = Path(root)
     files = sorted(p for p in root.rglob("*") if p.suffix.lower() in {".tif", ".tiff"})
     errors, rows = [], []

@@ -17,6 +17,12 @@ the final split are still pending execution and review. No model has been
 implemented or trained, and no evaluation results exist.
 The Gradio entry point is a placeholder; there is no working demo yet.
 
+The dataset-root resolver verifies repeated directory copies using relative TIFF
+filenames and file hashes before selecting one canonical root. Conflicting copies
+stop the audit; raw data is never deleted or silently deduplicated. Real unique
+counts and example images still need review in Colab sections 7-8 before freezing
+the split. See [the workflow](docs/colab-workflow.md).
+
 ## Research question
 
 Does replacing binary cross-entropy with Tversky loss improve U-Net recall,
