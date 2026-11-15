@@ -13,8 +13,11 @@ Phase 3 cloud execution is complete on user-verified validation evidence.
 Use `03_train_tversky.ipynb` for Phase 4: public pinned clone, original manifest
 and BCE identity checks, loss diagnostics, training-only smoke gate, fresh Tversky
 fit/resume, validation threshold search and aggregate BCE comparison. See
-../docs/phase4-training.md. Real Tversky training remains pending user execution;
-locked test evaluation is Phase 5 and is not implemented here. A separate polished judge-facing notebook is a mandatory
+../docs/phase4-training.md. Phase 4 is complete on user-verified validation evidence.
+Use `04_final_evaluation.ipynb` for Phase 5: original checkpoint/manifest preflight,
+explicit review gate, fixed thresholds and patient-bootstrap/FLAIR comparisons.
+Run sections 1–8, STOP for review, then explicitly approve sections 9–10.
+See ../docs/phase5-evaluation.md. No actual test results exist from local preparation. A separate polished judge-facing notebook is a mandatory
 final refinement milestone after modelling, evaluation and Gradio, not now.
 
 Keep reusable logic in `src/`. Do not commit private paths, tokens, patient

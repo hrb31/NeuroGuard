@@ -1,6 +1,15 @@
 # VS Code -> GitHub -> browser Colab
 
-## Current Phase 3 workflow
+## Current Phase 5 workflow
+
+Phases 3–4 are complete on user-verified validation evidence. Use
+[04_final_evaluation.ipynb](../notebooks/04_final_evaluation.ipynb) and
+[the Phase 5 guide](phase5-evaluation.md): sections 1–8 preflight, explicit review
+gate in 9, single final inference in 10, aggregate/figure review in 11. Do not use
+Run all. No retraining or test threshold search. All results remain private.
+The source must be at an approved pushed SHA; preparation does not push it.
+
+## Historical Phase 3/4 workflow
 
 Phase 2 is complete on verified actual Colab evidence supplied by the user in
 the Phase 3 request. The original notebook below is preserved as historical

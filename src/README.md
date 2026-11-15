@@ -11,4 +11,7 @@ resume), smoke.py (train-only debugging), reporting.py (private validation figur
 Phase 4 adds losses.py (explicit BCE/Tversky factory and soft per-slice Tversky),
 shared fit/smoke criterion selection, loss-aware curves and aggregate validation
 comparison in reporting.py. The model, original BCE config and checkpoint schema
-are unchanged. No final test evaluation or application inference is implemented.
+are unchanged. Phase 5 adds final_evaluation.py: trusted checkpoint/source preflight,
+explicit approval, separate test-only dataset, fixed inference, patient bootstrap,
+comparison tables and private FLAIR figures. Development loaders stay protected.
+No actual held-out test execution or application inference has occurred here.

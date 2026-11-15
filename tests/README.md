@@ -27,3 +27,10 @@ count and CUDA backward when available). Shared resume and tiny-overfit tests ru
 both losses; test_comparison.py checks percentage-point units, missing metrics and
 cohort mismatch. Both training notebooks must compile with no outputs. These are
 synthetic engineering checks, not Tversky MRI findings or a cloud execution claim.
+
+Phase 5 adds test_final_evaluation.py: original-checkpoint provenance/checksum/
+config/epoch/shape rejection, exact synthetic logits on reload, eval/inference-only
+execution, frozen operating-point metrics, paired patient weighting/NA intervals,
+pp versus relative units, gate/digest/repeat protection, data mutation rejection,
+fixed example ties/failure selection and private artifact generation. Orchestration
+uses generated inputs only; none of these checks measure real MRI performance.

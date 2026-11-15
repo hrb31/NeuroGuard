@@ -14,7 +14,7 @@ positives? Improvement is a hypothesis, not a finding.
 
 Three comparison levels: an always-empty mask (Model 0), a small U-Net trained
 with `BCEWithLogitsLoss` (Model 1), and the identical U-Net with Tversky loss
-(`alpha=.3` FP, `beta=.7` FN; Model 2, Phase 4 implementation prepared). The experiment
+(`alpha=.3` FP, `beta=.7` FN; Model 2, completed Phase 4). The experiment
 changes the loss while preserving data, preprocessing, architecture, seed policy,
 optimisation budget and selection rules.
 
@@ -56,9 +56,28 @@ recall, including on small annotations. Curves/overlays were reviewed by the use
 See [verified aggregate evidence and limitations](docs/phase3-validation.md).
 These are validation findings, not final test results.
 
-**Phase 4 implementation is prepared; actual Tversky GPU training is pending.**
-It reuses the identical U-Net and shared training/resume code, changing loss alone.
-No final test predictions or working Gradio demo exists.
+**Phase 4 is complete on user-verified Colab validation evidence:** 30 epochs,
+best epoch 23; same 1,942,577-parameter U-Net, Tversky alpha=.3/beta=.7,
+smooth=1e-6, per-slice batch mean.
+
+| Validation metric | BCE t=.5 | Tversky t=.5 / selected fallback |
+|---|---:|---:|
+| Positive-slice patient-macro Dice | .73794 | .79822936 |
+| Recall | .81314 | .88439719 |
+| Precision | .73336 | .75929147 |
+| Small-region Dice | .62082 | .68867639 |
+| Small-region recall | .76215 | .82965727 |
+| Empty-mask FP slice rate | .19175 | .73300971 |
+
+Tversky improved validation recall but failed the FP guardrails: the hypothesis
+is only partially supported on validation. No tested Tversky threshold met the 10%
+constraint; selected .5 is labelled `fp_constraint_unmet_fallback`. BCE selected .8
+meets the constraint. Reviewed figures include a small miss, a successful medium
+region, imperfect large boundaries and empty-mask false positives. See
+[Phase 4 findings](docs/phase4-validation.md).
+
+**Phase 5 evaluation code/notebook is prepared for user execution after review.**
+No actual held-out test metrics have been generated here; no working Gradio demo yet.
 
 ## Data and evaluation
 
@@ -76,7 +95,15 @@ Report recall/precision, empty-mask false positives, training-derived size group
 and denominators separately. Background-heavy pixel accuracy can hide complete
 failure to detect foreground. See [the frozen protocol](docs/evaluation-protocol.md).
 
-## Run Phase 4
+## Run Phase 5
+
+Use [04_final_evaluation.ipynb](notebooks/04_final_evaluation.ipynb) and the
+[Phase 5 guide](docs/phase5-evaluation.md). In a fresh browser Colab T4, run sections
+1–8 and stop for preflight review. Sections 9–10 require explicit approval before
+test predictions. Preserve all original runs and the frozen manifest. No retraining
+or new threshold search. Source publication still requires separate approval.
+
+## Completed Phase 4 workflow
 
 Use [03_train_tversky.ipynb](notebooks/03_train_tversky.ipynb) in browser Colab
 with a T4. The [Phase 4 guide](docs/phase4-training.md) gives exact inputs, numbered
@@ -115,16 +142,16 @@ training tests then skip explicitly.
 - `notebooks/01_data_exploration.ipynb`: original Phase 2 audit/evidence workflow.
 - `notebooks/02_train_bce.ipynb`: Phase 3 validation baseline and BCE experiment.
 - `notebooks/03_train_tversky.ipynb`: matched Phase 4 training and validation comparison.
-- `src/`: data integrity, preprocessing, model, metrics, loaders, training and plots.
+- `notebooks/04_final_evaluation.ipynb`: preflight, explicit approval, fixed held-out comparison.
+- `src/`: data integrity, preprocessing, model, metrics, loaders, training, final evaluation and plots.
 - `configs/bce.json`, `configs/tversky.json`, `tests/`, `docs/`: frozen settings, checks and reproduction.
 - `results/`: only future reviewed summaries; `app.py`: future Gradio placeholder.
 
-Phases 1–3 complete on user-verified evidence; Phase 4 prepared, cloud run pending;
-Phase 5 locked final
-three-model evaluation/error analysis; Phase 6 Gradio/demo/submission. A mandatory
+Phases 1–4 complete on user-verified evidence; Phase 5 locked final
+three-model evaluation/error analysis prepared locally, actual test execution pending; Phase 6 Gradio/demo/submission. A mandatory
 final refinement and scientific/submission audit follows the core work, including
 a separate polished judge-facing notebook with genuine reviewed outputs. It is
-not performed during Phase 4.
+deferred until core evaluation and Gradio are complete.
 
 Data, patient identifiers, checkpoints, credentials, environments, private context
 and unreviewed notebook outputs stay out of Git. Do not publish derivative images

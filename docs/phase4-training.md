@@ -1,9 +1,10 @@
 # Phase 4: matched Tversky experiment
 
-Phase 3 is complete on genuine validation evidence verified and supplied by the
-user on 2026-11-15. The agent has not rerun BCE or inspected its private artifacts.
-Phase 4 code is prepared locally; actual Tversky training/results remain pending
-execution in the user's browser Colab account. Phase 5 remains locked.
+Phases 3–4 are complete on genuine Colab validation evidence verified and supplied
+by the user on 2026-11-15. See [reviewed Phase 4 findings](phase4-validation.md).
+The instructions below preserve the completed training workflow; do not retrain.
+Use [the Phase 5 evaluation guide](phase5-evaluation.md) for the current task.
+The agent has not accessed the private original checkpoints or test predictions.
 
 ## Frozen intervention
 

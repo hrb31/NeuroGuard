@@ -1,0 +1,21 @@
+{
+  "stage": "Phase 5 held-out test",
+  "manifest_sha256": "7514044281736b609e9d1c09c342a3f2514d0a2ca4dea9c4ce0d466cd86fe493",
+  "training_commits": {
+    "bce": "454501448551cd0f05f4b74f7f77f9a67b9a0aab",
+    "tversky": "1e6e6b6067d98641967c3dbaf4c49b605d1e81c5"
+  },
+  "cohorts": {"train": [77, 2719, 934], "validation": [16, 621, 209], "test": [17, 589, 230]},
+  "operating_points": {
+    "always_empty": {"model": null, "threshold": null, "status": "non_learning_baseline"},
+    "bce_default": {"model": "bce", "threshold": 0.5, "status": "common_threshold"},
+    "tversky_default": {"model": "tversky", "threshold": 0.5, "status": "common_threshold"},
+    "bce_selected": {"model": "bce", "threshold": 0.8, "status": "constraint_met"},
+    "tversky_selected": {"model": "tversky", "threshold": 0.5, "status": "fp_constraint_unmet_fallback"}
+  },
+  "bootstrap": {"replicates": 1000, "seed": 42, "confidence": 0.95, "unit": "patient", "interval": "percentile"},
+  "qualitative_policy": "Sort test records by patient then numeric slice then image path. Before inference choose the lower median by area in each nonempty small/medium/large group, and the first empty slice. After inference add, for each trained model at 0.5, the lowest-Dice positive slice and the empty slice with most FP pixels (only if FP exists); ties use sorted record order. Show every selected slice with GT and all four trained-model operating points on FLAIR channel 1. Failures are explicitly outcome-selected, not representative prevalence estimates.",
+  "empty_fp_limit": 0.1,
+  "comparison_fp_increase_limit": 0.05,
+  "approval_phrase": "EVALUATE FROZEN TEST ONCE"
+}

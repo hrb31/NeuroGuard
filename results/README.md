@@ -1,6 +1,7 @@
 # Results
 
-No measured results yet. Later store reviewed, non-sensitive configuration and
+User-verified validation aggregates are documented in docs/phase3-validation.md
+and docs/phase4-validation.md. Final test execution is pending. Later store reviewed, non-sensitive configuration and
 metric tables, size-group counts, overlays and failure analyses. Raw run outputs
 are ignored by default. Explicitly allowlist reviewed files in `.gitignore` when
 ready; do not force-add entire output directories.
