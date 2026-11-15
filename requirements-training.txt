@@ -1,2 +1,4 @@
 # Keep Colab's existing CUDA-enabled torch; install no replacement here.
 -r requirements-audit.txt
+# Colab/IPython may omit this required supporting dependency; pip check stays strict.
+jedi>=0.19,<0.20

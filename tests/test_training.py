@@ -105,8 +105,8 @@ def test_cuda_forward_backward():
     assert all(p.grad is not None for p in model.parameters())
 
 
-def small_config():
-    config = json.loads(Path('configs/bce.json').read_text())
+def small_config(experiment='bce'):
+    config = json.loads(Path(f'configs/{experiment}.json').read_text())
     config.update(max_epochs=2, batch_size=14, num_workers=0)
     config['model']['base_channels'] = 2
     config['preprocessing']['size'] = 32
@@ -138,10 +138,11 @@ def test_baseline_and_validation_outputs(development):
 
 
 @pytest.mark.parametrize('interruption', ['epoch_boundary', 'mid_epoch', 'before_first_checkpoint'])
-def test_checkpoint_resume_matches_uninterrupted(development, tmp_path, monkeypatch, interruption):
+@pytest.mark.parametrize('experiment', ['bce', 'tversky'])
+def test_checkpoint_resume_matches_uninterrupted(development, tmp_path, monkeypatch, interruption, experiment):
     import src.training as training
     root, manifest, _ = development
-    config = small_config()
+    config = small_config(experiment)
     def datasets():
         return [MRIDataset(root, manifest, s, size=32) for s in ('train', 'validation')]
     identity = {'config': config, 'manifest_sha256': manifest['manifest_sha256'],
@@ -176,6 +177,9 @@ def test_checkpoint_resume_matches_uninterrupted(development, tmp_path, monkeypa
     assert (tmp_path/'resumed'/'best.pt').exists()
     state = load_checkpoint(tmp_path/'resumed', identity)
     assert state['epoch'] == 2
+    other_config = small_config('tversky' if experiment == 'bce' else 'bce')
+    with pytest.raises(ValueError, match='differs'):
+        load_checkpoint(tmp_path/'resumed', dict(identity, config=other_config))
     with pytest.raises(ValueError, match='differs'):
         load_checkpoint(tmp_path/'resumed', dict(identity, commit='changed'))
     pointer = json.loads((tmp_path/'resumed'/'latest.json').read_text())
@@ -243,16 +247,18 @@ def test_private_validation_figures(development, tmp_path):
             image.verify()
 
 
-def test_tiny_training_overfit(development, tmp_path):
+@pytest.mark.parametrize('experiment', ['bce', 'tversky'])
+def test_tiny_training_overfit(development, tmp_path, experiment):
     root, manifest, _ = development
     result = tiny_overfit(MRIDataset(root, manifest, 'train', size=32),
-                          small_config(), tmp_path/'smoke', steps=40)
+                          small_config(experiment), tmp_path/'smoke', steps=40)
     assert result['loss_decreased'] and result['checkpoint_roundtrip']
     assert result['debug_only']
 
 
-def test_training_notebook_is_clean_compilable_and_protects_test():
-    nb = json.loads(Path('notebooks/02_train_bce.ipynb').read_text(encoding='utf-8'))
+@pytest.mark.parametrize('name', ['02_train_bce', '03_train_tversky'])
+def test_training_notebook_is_clean_compilable_and_protects_test(name):
+    nb = json.loads(Path(f'notebooks/{name}.ipynb').read_text(encoding='utf-8'))
     for i, cell in enumerate(nb['cells']):
         if cell['cell_type'] == 'code':
             compile(''.join(cell['source']), f'training notebook cell {i}', 'exec')

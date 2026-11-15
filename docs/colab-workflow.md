@@ -6,7 +6,10 @@ Phase 2 is complete on verified actual Colab evidence supplied by the user in
 the Phase 3 request. The original notebook below is preserved as historical
 reproduction instructions. **For BCE training use
 [02_train_bce.ipynb](../notebooks/02_train_bce.ipynb) and
-[the Phase 3 guide](phase3-training.md).** Never regenerate or overwrite the
+[the Phase 3 guide](phase3-training.md).** Phase 3 is now complete on user-verified
+validation results ([findings](phase3-validation.md)). For the current matched
+Tversky experiment use [03_train_tversky.ipynb](../notebooks/03_train_tversky.ipynb)
+and [the Phase 4 guide](phase4-training.md); preserve completed BCE artifacts. Never regenerate or overwrite the
 existing seed42 assignments or original Phase 2 evidence. The new notebook
 loads/validates them and writes to a separate experiment directory. Actual cloud
 execution is performed by the user; local synthetic checks do not establish

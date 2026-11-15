@@ -19,3 +19,11 @@ validation results or proof of T4 memory capacity.
 
 conftest.py selects the noninteractive Agg plotting backend for tests, avoiding
 Windows Tk dependencies and GUI windows while verifying saved figures.
+
+Phase 4 adds test_losses.py (analytic soft counts/FP-FN order, native-grid empty,
+tiny/large/background/perfect/mixed masks, signed gradients, numerical gradcheck,
+empty-mask gradient/rounding limitations, matched configs/initialisation/parameter
+count and CUDA backward when available). Shared resume and tiny-overfit tests run
+both losses; test_comparison.py checks percentage-point units, missing metrics and
+cohort mismatch. Both training notebooks must compile with no outputs. These are
+synthetic engineering checks, not Tversky MRI findings or a cloud execution claim.

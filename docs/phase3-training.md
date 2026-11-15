@@ -1,5 +1,10 @@
 # Phase 3 execution and evidence
 
+**Completed on user-verified Colab validation evidence supplied 2026-11-15.**
+See [verified findings](phase3-validation.md). Preserve the original BCE artifacts;
+do not rerun this notebook for Phase 4. Use [the Tversky guide](phase4-training.md).
+The execution instructions below document the completed Phase 3 workflow.
+
 Phase 2 counts/channel review and split completion are supplied as verified by
 the user in the Phase 3 request. This local implementation does not rerun that
 cloud audit. Never replace the saved assignments or original evidence.
@@ -12,9 +17,7 @@ After reviewing the public diff and explicitly approving a push, obtain the full
 `https://colab.research.google.com/github/hrb31/NeuroGuard/blob/COMMIT_SHA/notebooks/02_train_bce.ipynb`
 
 Replace COMMIT_SHA with that exact commit. A local uploaded notebook cannot fetch
-unpublished source. For private repositories, grant browser GitHub access and
-separate read-only runtime authentication using a secret/hidden prompt. Never
-embed tokens. Do not download MRI data locally or upload private patient data.
+unpublished source. The repository is public and requires no GitHub token. Do not download MRI data locally or upload private patient data.
 
 Have the **original Phase 2 Frozen manifest SHA256** ready (section 9 output or
 the original evidence archive). It is the canonical JSON identity stored under
@@ -125,6 +128,6 @@ Report errors and interruptions. Do not send tokens, raw TIFFs, patient-level
 records, manifest or full weights. Pixel accuracy is supplementary: a predictor
 can score highly by returning background everywhere while detecting nothing.
 
-There are no genuine baseline/BCE validation findings until these cells execute.
-Do not call Phase 3 experimentally complete from local synthetic tests. Final
-three-model test evaluation, Gradio and mandatory submission refinement are later.
+Phase 3 completion rests on genuine user-verified Colab outputs, not local
+synthetic tests. Final three-model test evaluation, Gradio and mandatory
+submission refinement remain later phases.

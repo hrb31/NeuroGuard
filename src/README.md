@@ -8,4 +8,7 @@ completed in user Colab execution. Phase 3 adds model.py (small logit U-Net),
 dataset.py (read-only manifest and seeded train/validation loaders), metrics.py
 (patient-macro/empty/size/threshold protocol), training.py (BCE epochs and verified
 resume), smoke.py (train-only debugging), reporting.py (private validation figures).
-No Tversky loss, final test evaluation or application inference is implemented.
+Phase 4 adds losses.py (explicit BCE/Tversky factory and soft per-slice Tversky),
+shared fit/smoke criterion selection, loss-aware curves and aggregate validation
+comparison in reporting.py. The model, original BCE config and checkpoint schema
+are unchanged. No final test evaluation or application inference is implemented.

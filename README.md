@@ -14,7 +14,7 @@ positives? Improvement is a hypothesis, not a finding.
 
 Three comparison levels: an always-empty mask (Model 0), a small U-Net trained
 with `BCEWithLogitsLoss` (Model 1), and the identical U-Net with Tversky loss
-(`alpha=.3` FP, `beta=.7` FN; Model 2, deferred to Phase 4). The central experiment
+(`alpha=.3` FP, `beta=.7` FN; Model 2, Phase 4 implementation prepared). The experiment
 changes the loss while preserving data, preprocessing, architecture, seed policy,
 optimisation budget and selection rules.
 
@@ -38,10 +38,27 @@ The immutable seed42 patient split is saved privately in Drive:
 | Validation | 16 | 621 | 209 |
 | Test | 17 | 589 | 230 |
 
-Phase 3 adds the always-empty predictor, U-Net, metrics, seeded loaders, BCE
-training/resume infrastructure and a Colab training notebook. **Actual validation
-baseline results and full BCE GPU training remain pending user Colab execution.**
-No Tversky implementation, final test predictions or working Gradio demo exists.
+**Phase 3 is complete on user-verified Colab validation evidence:** 25 epochs,
+best epoch 18. The always-empty baseline has Dice/recall 0, empty FP 0% and pooled
+pixel accuracy 99.05%. BCE validation findings:
+
+| Metric | BCE t=.5 | BCE selected t=.8 |
+|---|---:|---:|
+| Positive-slice patient-macro Dice | 0.73794 | 0.69258 |
+| Recall | 0.81314 | 0.66549 |
+| Precision | 0.73336 | 0.81206 |
+| Empty-mask FP rate | 19.175% | 9.466% |
+| Small-region Dice | 0.62082 | 0.56990 |
+| Small-region recall | 0.76215 | 0.53931 |
+
+Threshold .8 satisfies the frozen <=10% empty-mask FP constraint, with lower
+recall, including on small annotations. Curves/overlays were reviewed by the user.
+See [verified aggregate evidence and limitations](docs/phase3-validation.md).
+These are validation findings, not final test results.
+
+**Phase 4 implementation is prepared; actual Tversky GPU training is pending.**
+It reuses the identical U-Net and shared training/resume code, changing loss alone.
+No final test predictions or working Gradio demo exists.
 
 ## Data and evaluation
 
@@ -59,11 +76,13 @@ Report recall/precision, empty-mask false positives, training-derived size group
 and denominators separately. Background-heavy pixel accuracy can hide complete
 failure to detect foreground. See [the frozen protocol](docs/evaluation-protocol.md).
 
-## Run Phase 3
+## Run Phase 4
 
-Use [02_train_bce.ipynb](notebooks/02_train_bce.ipynb) in browser Colab with a T4.
-The [Phase 3 guide](docs/phase3-training.md) gives inputs, execution order, resume
-instructions and the results to return. Source must be available at an approved
+Use [03_train_tversky.ipynb](notebooks/03_train_tversky.ipynb) in browser Colab
+with a T4. The [Phase 4 guide](docs/phase4-training.md) gives exact inputs, numbered
+execution steps, the smoke-review gate, resume instructions and artifacts to return.
+The repository is public; no GitHub token is needed. Do not rerun completed BCE.
+Source must be available at an approved
 full Git commit; opening the notebook alone does not clone its modules. No push
 or publication occurs automatically.
 
@@ -73,6 +92,10 @@ batch16, max30 epochs, patience7 and
 seed42. Outputs are logits. Paired preprocessing and training augmentation reuse
 Phase 2. Private Drive checkpoints include optimiser/RNG state, configuration,
 manifest identity, code SHA, environment, histories and best validation weights.
+The [Tversky configuration](configs/tversky.json) changes loss and experiment
+identity only. Its per-slice mean includes empty masks, with smoothing `1e-6` in
+numerator and denominator. Empty-mask gradients can be extremely small; the
+Phase 4 guide documents this limitation before the definitive run.
 
 Local synthetic checks (install the appropriate CPU/GPU torch build separately):
 
@@ -91,15 +114,17 @@ training tests then skip explicitly.
 
 - `notebooks/01_data_exploration.ipynb`: original Phase 2 audit/evidence workflow.
 - `notebooks/02_train_bce.ipynb`: Phase 3 validation baseline and BCE experiment.
+- `notebooks/03_train_tversky.ipynb`: matched Phase 4 training and validation comparison.
 - `src/`: data integrity, preprocessing, model, metrics, loaders, training and plots.
-- `configs/bce.json`, `tests/`, `docs/`: frozen settings, checks and reproduction.
+- `configs/bce.json`, `configs/tversky.json`, `tests/`, `docs/`: frozen settings, checks and reproduction.
 - `results/`: only future reviewed summaries; `app.py`: future Gradio placeholder.
 
-Phases 1–2 complete; Phase 3 current; Phase 4 Tversky; Phase 5 locked final
+Phases 1–3 complete on user-verified evidence; Phase 4 prepared, cloud run pending;
+Phase 5 locked final
 three-model evaluation/error analysis; Phase 6 Gradio/demo/submission. A mandatory
 final refinement and scientific/submission audit follows the core work, including
 a separate polished judge-facing notebook with genuine reviewed outputs. It is
-not performed during Phase 3.
+not performed during Phase 4.
 
 Data, patient identifiers, checkpoints, credentials, environments, private context
 and unreviewed notebook outputs stay out of Git. Do not publish derivative images
@@ -110,7 +135,7 @@ or weights without licensing/privacy review. No code licence has been selected.
 Dataset: [release](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
 and [author's description](https://mateuszbuda.com/2017/12/01/brainseg.html).
 Architecture: [Ronneberger et al., U-Net](https://arxiv.org/abs/1505.04597).
-Future loss: [Salehi et al., Tversky](https://arxiv.org/abs/1706.05721).
+Loss: [Salehi et al., Tversky](https://arxiv.org/abs/1706.05721).
 Implementation guidance: [PyTorch reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html),
 [BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html)
 and [checkpoint guide](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html).

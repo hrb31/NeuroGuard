@@ -1,4 +1,4 @@
-"""BCE experiment loop, reusable epoch evaluation and verified epoch-boundary resume."""
+"""Matched BCE/Tversky loop, validation and verified epoch-boundary resume."""
 import json
 import os
 from pathlib import Path
@@ -7,12 +7,12 @@ import time
 
 import numpy as np
 import torch
-from torch import nn
 
 from .data import write_json
 from .dataset import file_sha256, make_loader
 from .metrics import aggregate, metric_row
 from .model import UNet
+from .losses import make_criterion
 
 
 def seed_everything(seed):
@@ -54,7 +54,7 @@ def train_epoch(model, loader, optimizer, criterion, device):
 @torch.no_grad()
 def evaluate(model, loader, device, cutoffs, thresholds=(.5,), criterion=None):
     if loader.dataset.split != 'validation':
-        raise ValueError('Phase 3 evaluation is validation only')
+        raise ValueError('Development evaluation is validation only')
     if model is not None:
         model.eval()
     rows = {float(t): [] for t in thresholds}
@@ -139,10 +139,11 @@ def fit(train_dataset, validation_dataset, config, directory, identity, *, resum
     """Construct a fresh seeded model; resume replays only an interrupted epoch.
 
     Identity includes complete config, manifest hash, source commit and environment.
-    Criterion is passed into the epoch helpers; Phase 4 can reuse them unchanged.
+    Only the criterion differs between experiments; checkpoint format is unchanged.
     """
-    if identity['config'] != config or config['experiment'] != 'bce' or config['loss'] != 'BCEWithLogitsLoss(mean)':
-        raise ValueError('Phase 3 supports the frozen BCE configuration only')
+    if identity['config'] != config:
+        raise ValueError('Training config differs from frozen identity')
+    criterion = make_criterion(config)
     if train_dataset.split != 'train' or validation_dataset.split != 'validation':
         raise ValueError('Incorrect development dataset roles')
     if {r['patient'] for r in train_dataset.records} & {r['patient'] for r in validation_dataset.records}:
@@ -158,7 +159,6 @@ def fit(train_dataset, validation_dataset, config, directory, identity, *, resum
     model = UNet(**config['model']).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=config['optimizer']['lr'],
                                  weight_decay=config['optimizer']['weight_decay'])
-    criterion = nn.BCEWithLogitsLoss()
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     history, best, patience_reference, bad_epochs, start, best_state = [], -1.0, -1.0, 0, 0, None

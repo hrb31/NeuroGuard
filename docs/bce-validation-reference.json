@@ -1,0 +1,14 @@
+{
+  "provenance": "User-verified Phase 3 Colab validation results supplied in the Phase 4 request, 2026-11-15; not re-evaluated by this implementation.",
+  "split": "validation",
+  "cohort": {"patients": 16, "slices": 621, "positive_slices": 209},
+  "completed_epochs": 25,
+  "best_epoch": 18,
+  "parameter_count": 1942577,
+  "always_empty": {"dice": 0.0, "recall": 0.0, "empty_fp_rate": 0.0, "pooled_pixel_accuracy": 0.9905},
+  "default": {"threshold": 0.5, "dice": 0.73794, "recall": 0.81314, "precision": 0.73336, "empty_fp_rate": 0.19175, "small_dice": 0.62082, "small_recall": 0.76215},
+  "selected": {"threshold": 0.8, "dice": 0.69258, "recall": 0.66549, "precision": 0.81206, "empty_fp_rate": 0.09466, "small_dice": 0.56990, "small_recall": 0.53931},
+  "selection_status": "constraint_met",
+  "visual_review": "User reviewed training curves and segmentation overlays: meaningful abnormality segmentation, with some small annotated regions missed, particularly at threshold 0.8.",
+  "limitations": "Rounded aggregate validation statistics only. BCE IoU, size-group denominators, medium/large metrics, exact timings and checkpoint hashes were not supplied; do not infer them. No final test results."
+}

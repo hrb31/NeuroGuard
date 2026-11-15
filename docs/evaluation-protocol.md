@@ -2,9 +2,11 @@
 
 Frozen on 2026-11-15 before full BCE training, using the defaults authorised in
 the Phase 3 request. Phase 2 is complete on verified Colab evidence supplied by
-the user. Actual baseline/BCE validation findings remain pending cloud execution.
-No final test predictions have been accessed. See configs/bce.json and
-docs/phase3-training.md for training implementation and provenance.
+the user. Phase 3 validation is now complete on user-verified evidence
+([aggregate findings](phase3-validation.md)); the evaluation rules below remain
+unchanged. Phase 4 changes loss alone. No final test predictions have been accessed.
+See configs/bce.json and docs/phase3-training.md for training provenance, and
+docs/phase4-training.md for the Tversky execution workflow.
 
 ## Aggregation and empty masks
 
@@ -81,3 +83,13 @@ lock both checkpoints, thresholds and configuration before opening test predicti
 
 Demographic fairness checks require suitable public metadata and adequate counts.
 Do not infer demographics from MRI pixels or call size strata a fairness audit.
+
+## Phase 4 loss convention frozen before training
+
+Soft sigmoid TP/FP/FN sums per slice, alpha=.3 FP, beta=.7 FN;
+`1-(TP+1e-6)/(TP+.3FP+.7FN+1e-6)`, then mean over slices including empty masks.
+Empty-mask FP gradients can be extremely small, and nearly-zero soft predictions
+can still produce high loss on empty slices; see [the loss review](phase4-training.md).
+No loss smoothing enters evaluation metrics. Training-loss scales must not be
+compared across objectives. All checkpoint/threshold/size/test-isolation rules
+above are unchanged. No Tversky validation findings exist before the actual run.

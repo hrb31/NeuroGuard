@@ -2,10 +2,10 @@
 from pathlib import Path
 import numpy as np
 import torch
-from torch import nn
 
 from .model import UNet
 from .training import seed_everything
+from .losses import make_criterion
 
 
 def tiny_overfit(dataset, config, directory, *, steps=100):
@@ -23,7 +23,7 @@ def tiny_overfit(dataset, config, directory, *, steps=100):
     x, y = x.to(device), y.to(device)
     model = UNet(**config['model']).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=config['optimizer']['lr'])
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = make_criterion(config)
     losses = []
     model.train()
     for _ in range(steps):
@@ -51,7 +51,7 @@ def tiny_overfit(dataset, config, directory, *, steps=100):
     import matplotlib.pyplot as plt
     fig, axes = plt.subplots(1, 3, figsize=(10, 3))
     axes[0].plot(range(1, steps+1), losses)
-    axes[0].set(xlabel='Tiny training update', ylabel='BCE loss')
+    axes[0].set(xlabel='Tiny training update', ylabel=f"{config['experiment'].upper()} loss")
     for ax in axes[1:]:
         ax.imshow(x[0, 1].cpu().numpy(), cmap='gray')
         ax.axis('off')
