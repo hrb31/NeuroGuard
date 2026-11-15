@@ -64,7 +64,7 @@ def test_reject_invalid_splits(dataset, fault):
 
 @pytest.mark.parametrize("fault", ["missing", "orphan", "corrupt", "shape", "labels"])
 def test_audit_rejects_bad_files(dataset, fault):
-    mask = next(dataset.rglob("*_mask.tif"))
+    mask = sorted(dataset.rglob("*_mask.tif"))[0]
     if fault == "missing":
         mask.unlink()
     elif fault == "orphan":
@@ -100,10 +100,34 @@ def test_freeze_idempotence_and_modification_guard(dataset):
     np.testing.assert_allclose(manifest["size_cutoffs"], expected)
     with pytest.raises(ValueError, match="differs"):
         freeze_split(dataset, audit, output, channel_review="synthetic three channels", seed=43)
-    mask = next(dataset.rglob("*_mask.tif"))
-    tifffile.imwrite(mask, np.zeros((12, 16), np.uint8))
+    # Directory traversal order is filesystem-dependent. Rewriting an already
+    # empty mask with identical bytes is a no-op, not a dataset modification.
+    empty_row = next(row for row in audit["records"] if row["foreground"] == 0)
+    empty_path = dataset / empty_row["mask"]
+    empty_mask = tifffile.imread(empty_path)
+    assert not np.count_nonzero(empty_mask)
+    tifffile.imwrite(empty_path, np.zeros_like(empty_mask))
+    unchanged = audit_dataset(dataset)
+    assert unchanged["dataset_fingerprint"] == audit["dataset_fingerprint"]
+    assert manifest == freeze_split(dataset, audit, output, channel_review="synthetic three channels")
+
+    # Choose a known positive record from the sorted audit, then truly change it.
+    positive_row = next(row for row in audit["records"] if row["foreground"] > 0)
+    mask_path = dataset / positive_row["mask"]
+    original_mask = tifffile.imread(mask_path)
+    assert np.count_nonzero(original_mask) > 0
+    tifffile.imwrite(mask_path, np.zeros_like(original_mask))
+    modified_mask = tifffile.imread(mask_path)
+    assert not np.array_equal(original_mask, modified_mask)
+    assert np.count_nonzero(modified_mask) == 0
+    changed = audit_dataset(dataset)
+    assert changed["errors"] == []
+    changed_row = next(row for row in changed["records"] if row["mask"] == positive_row["mask"])
+    assert changed_row["mask_sha256"] != positive_row["mask_sha256"]
+    assert changed["dataset_fingerprint"] != audit["dataset_fingerprint"]
     with pytest.raises(ValueError, match="changed"):
         freeze_split(dataset, audit, output, channel_review="synthetic three channels")
+    assert json.loads(output.read_text()) == manifest
 
 
 def test_preprocessing_alignment_and_train_only_augmentation():
