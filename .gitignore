@@ -1,0 +1,59 @@
+# Private project instructions and reference documents
+/AGENTS.md
+/local-context/
+
+# Data and trained artifacts (review any derivative before sharing)
+/data/
+/datasets/
+/checkpoints/
+/artifacts/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.tif
+*.tiff
+*.dcm
+*.nii
+*.nii.gz
+*.zip
+*.tar
+*.tar.gz
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+kaggle.json
+credentials*.json
+*service-account*.json
+*.pem
+*.key
+.aws/
+.kaggle/
+.secrets/
+
+# Environments, caches and temporary files
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+node_modules/
+/tmp/
+/temp/
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Only curated, privacy-reviewed outputs belong in results
+/results/*
+!/results/README.md

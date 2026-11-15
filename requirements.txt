@@ -1,0 +1,14 @@
+# Proposed Python 3.11 environment. Not installed or compatibility-tested.
+# Freeze exact versions after a clean local/Colab smoke test.
+# In Colab, inspect the existing GPU torch build before installing/replacing it.
+torch>=2.5,<3
+numpy>=1.26,<3
+pandas>=2.2,<3
+Pillow>=10.4,<13
+tifffile>=2024.8
+matplotlib>=3.9,<4
+scikit-learn>=1.5,<2
+gradio>=5,<7
+jupyterlab>=4.2,<5
+ipykernel>=6.29,<8
+pytest>=8,<10
