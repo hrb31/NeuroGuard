@@ -1,7 +1,8 @@
 # Planned automated checks
 
-No tests are implemented or claimed passing yet. Add checks with the corresponding
-implementation: exact image-mask pairing; matching dimensions; binary masks;
-disjoint and exhaustive patient splits; deterministic manifests; paired transforms;
-metric empty-mask cases; U-Net tensor shapes; and Tversky FP/FN coefficient order.
-Use synthetic arrays for unit tests; keep raw data outside Git.
+Run `python -m pytest -q` from repository root. test_data.py generates synthetic
+TIFF pairs and checks missing/corrupt/orphan masks, labels and dimensions, duplicate
+detection, disjoint/exhaustive/reproducible patient splits, immutable manifests,
+paired transforms, finite empty/constant inputs, preview files and notebook syntax.
+These checks do not constitute real dataset, remote Colab or model validation.
+Future phases add metric edge cases, U-Net tensor shapes and loss checks.

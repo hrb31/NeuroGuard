@@ -1,8 +1,10 @@
 # Notebooks
 
-Next: `01_data_audit.ipynb` for private dataset inventory, alignment inspection and
-patient-disjoint split preparation. Later: matched BCE and Tversky Colab runs,
-then locked evaluation. No experiment notebooks exist yet.
+Use the existing `01_data_exploration.ipynb` as the single Phase 2 notebook. It
+bootstraps a pinned Git commit in browser Colab, audits version-2 data, previews
+training-only examples and freezes patient-disjoint splits after a review gate.
+See ../docs/colab-workflow.md for numbered execution/manual authentication steps.
+Later: matched BCE and Tversky runs, then locked evaluation. No training yet.
 
 Keep reusable logic in `src/`. Do not commit private paths, tokens, patient
 identifiers or unreviewed image outputs embedded in notebooks. Clear sensitive
