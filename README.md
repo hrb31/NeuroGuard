@@ -169,8 +169,7 @@ and [checkpoint guide](https://docs.pytorch.org/tutorials/beginner/saving_loadin
 
 Code, tests, notebooks and documentation were prepared with **OpenAI Codex**
 assistance. The student reviews the design, executes and validates experiments,
-interprets findings and must understand and explain the methods. Do not represent
-AI-generated code as entirely manually authored.
+interprets findings and must understand and explain the methods.
 
 Limits include a small cohort, correlated 2D slices, dataset-specific annotations,
 sequence substitution, possible near-duplicates not caught by exact hashes and
