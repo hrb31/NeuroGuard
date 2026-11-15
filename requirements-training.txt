@@ -1,0 +1,2 @@
+# Keep Colab's existing CUDA-enabled torch; install no replacement here.
+-r requirements-audit.txt

@@ -1,7 +1,10 @@
-# Evaluation protocol before experiments
+# Frozen modelling and evaluation protocol — Phase 3
 
-No model predictions or performance results exist for Phase 2. This document
-operationalises the existing project specification; guardrails remain proposals.
+Frozen on 2026-11-15 before full BCE training, using the defaults authorised in
+the Phase 3 request. Phase 2 is complete on verified Colab evidence supplied by
+the user. Actual baseline/BCE validation findings remain pending cloud execution.
+No final test predictions have been accessed. See configs/bce.json and
+docs/phase3-training.md for training implementation and provenance.
 
 ## Aggregation and empty masks
 
@@ -35,7 +38,7 @@ paired patient bootstrap, seed42, 1000 replicates, never independent slice boots
 
 ## Selection and test isolation
 
-Proposed checkpoint selection: best validation primary Dice at threshold .5,
+Checkpoint selection: best validation primary Dice at threshold .5,
 same budget/early-stopping rule for BCE and Tversky. After checkpoint selection,
 search thresholds .10,.15,...,.90 using validation only. Maximise primary Dice
 subject to empty-mask FP rate <=10%; tie-break lower FP rate, then higher threshold.
@@ -43,26 +46,38 @@ If no threshold qualifies, retain .5 and report constraint failure. If validatio
 has no empty masks, mark the constraint unevaluable and use Dice/high-threshold
 tie-break. Also report both models at .5 for an unconfounded comparison.
 
-Proposed acceptance guardrail: absolute empty-mask FP rate <=10% and Tversky
+Frozen acceptance guardrail: absolute empty-mask FP rate <=10% and Tversky
 increase over BCE <=5 percentage points. These are research tolerances, not
-clinically validated thresholds. Freeze before training, never after seeing test
-outcomes. Report recall/Dice tradeoffs and negative results even when unmet.
+clinically validated thresholds. These are fixed before training, never after
+seeing test outcomes. Report recall/Dice tradeoffs and negative results when unmet.
+
+Store every strictly better checkpoint; earliest epoch wins exact ties. Patience7
+uses min_delta=1e-4 relative to the last patience-reset reference, independently
+of saving the actual best checkpoint. Both arms use this rule and max30 epochs.
 
 Split audit uses all samples only for integrity and counts. Preview only training
 slices. Do not inspect test predictions or tune transforms, area boundaries,
 loss/architecture, checkpoint or thresholds on the test set. At final evaluation,
 lock both checkpoints, thresholds and configuration before opening test predictions.
 
-## Still to freeze before model development
+## Frozen data and preprocessing basis
 
-- Actual channel meanings/input selection with primary-source evidence.
-- Real audit and processed-image review, including survival of tiny masks on resize.
-- Dataset fingerprint, assignments, group counts, duplicate-resolution decision
-  and suitability of the seeded split. No performance-based re-splitting.
-- Preprocessing configuration (currently all stored channels, 256x256 square
-  padding/resize, per-image nonzero z-score, train-only paired flip/rotation).
-- Optimiser/budget/architecture proposals and the FP tolerances above.
-- Dataset terms and reviewed attribution for any publicly shown derivatives.
+- User-verified release README: pre-contrast0, FLAIR1, post-contrast2; missing
+  sequences may substitute FLAIR. Keep all three channels for both arms.
+- User-verified integrity/representative preprocessing review: 3,929 pairs,
+  110 patients, native256x256x3, no integrity errors/cross-patient duplicate groups.
+- Existing seed42 assignments: train77/2,719/934 positive; validation16/621/209;
+  test17/589/230. Never regenerate or change. Load original manifest hash and
+  training-derived numeric area cutoffs; no validation/test recalibration.
+- Existing src/preprocessing.py: centred square padding, image bilinear/mask
+  nearest; per-image/channel nonzero z-score after geometry; train-only joint
+  horizontal flip p=.5 and rotation +/-10deg p=.5. No evaluation augmentation.
+- Small four-level U-Net16/32/64/128/256, Conv+BatchNorm+ReLU; Adam .001,
+  weight_decay0, batch16, max30/patience7/seed42/float32. No pretrained encoder,
+  class weighting, scheduler, postprocessing or AMP. Batch-size changes require
+  review and matched definitive arms; no automatic OOM-driven change.
+- Version2 release terms still apply. Public derivatives need attribution,
+  licensing and privacy review separately from this private experiment.
 
 Demographic fairness checks require suitable public metadata and adequate counts.
 Do not infer demographics from MRI pixels or call size strata a fairness audit.

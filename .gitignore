@@ -7,6 +7,18 @@
 /datasets/
 /checkpoints/
 /artifacts/
+/experiments/
+/runs/
+/figures/
+*.safetensors
+*.npy
+*.npz
+# Private audit/manifests may contain patient identifiers, even without images.
+split_manifest.json
+synthetic_manifest.json
+audit.json
+root_resolution.json
+proposed_split_summary.json
 *.pt
 *.pth
 *.ckpt
@@ -53,6 +65,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 .vscode/
+.idea/
+.codex/
+.agents/
 
 # Only curated, privacy-reviewed outputs belong in results
 /results/*

@@ -1,7 +1,21 @@
 # VS Code -> GitHub -> browser Colab
 
+## Current Phase 3 workflow
+
+Phase 2 is complete on verified actual Colab evidence supplied by the user in
+the Phase 3 request. The original notebook below is preserved as historical
+reproduction instructions. **For BCE training use
+[02_train_bce.ipynb](../notebooks/02_train_bce.ipynb) and
+[the Phase 3 guide](phase3-training.md).** Never regenerate or overwrite the
+existing seed42 assignments or original Phase 2 evidence. The new notebook
+loads/validates them and writes to a separate experiment directory. Actual cloud
+execution is performed by the user; local synthetic checks do not establish
+real baseline/model metrics. Approval is still required before push.
+
+## Original Phase 2 reproduction workflow
+
 The local repository is authoritative. Edit only
-`notebooks/01_data_exploration.ipynb` and `src/` locally. Do not create another
+`notebooks/01_data_exploration.ipynb` and `src/` locally for Phase 2. Do not create another
 exploration notebook or fix the VS Code Colab extension. The user's browser Colab
 T4/CUDA check is reported successful; this phase has not remotely rerun it.
 
@@ -87,7 +101,7 @@ commit in a clean runtime. Copying a notebook to Drive does not synchronise it t
 GitHub. Before any public notebook submission, clear patient identifiers and
 unreviewed image outputs; publish only a licence/privacy-reviewed presentation.
 
-## Verified metadata versus pending evidence
+## Phase 2 metadata and historical evidence gate
 
 On 2026-11-15 a live request to Kaggle's public
 [dataset metadata endpoint](https://www.kaggle.com/api/v1/datasets/view/mateuszbuda/lgg-mri-segmentation)
@@ -95,8 +109,9 @@ returned version **2**, **CC BY-NC-SA 4.0**, last update 2019-05-02. Description
 TCIA images corresponding to TCGA lower-grade glioma patients and manual FLAIR
 abnormality masks. Source citations include Buda, Saha & Mazurowski (2019), DOI
 10.1016/j.compbiomed.2019.05.002, and Mazurowski et al. (2017). This verifies release
-metadata only; file counts, channel meanings and mask integrity are pending Colab
-execution. Attribution/noncommercial/share-alike obligations must be considered
+metadata only. Subsequent counts, channel meanings and integrity were verified
+in user Colab execution as recorded in the current README. The original workflow
+above describes the evidence gates at that time. Attribution/noncommercial/share-alike obligations must be considered
 before redistributing any data-derived artifacts, separately from a code licence.
 
 The notebook uses the supported
