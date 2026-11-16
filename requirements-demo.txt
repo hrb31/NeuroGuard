@@ -1,0 +1,6 @@
+# Install the appropriate PyTorch CPU/CUDA build separately; preserve Colab torch.
+numpy>=1.26,<3
+Pillow>=10.4,<13
+tifffile>=2024.8
+imagecodecs>=2024.9
+gradio==6.32.0

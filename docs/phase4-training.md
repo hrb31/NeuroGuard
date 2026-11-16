@@ -1,10 +1,9 @@
-# Phase 4: matched Tversky experiment
+# Original matched Tversky training procedure
 
-Phases 3–4 are complete on genuine Colab validation evidence verified and supplied
-by the user on 2026-11-15. See [reviewed Phase 4 findings](phase4-validation.md).
-The instructions below preserve the completed training workflow; do not retrain.
-Use [the Phase 5 evaluation guide](phase5-evaluation.md) for the current task.
-The agent has not accessed the private original checkpoints or test predictions.
+I completed the matched Tversky experiment in Colab (30 epochs; best checkpoint
+at epoch 23). See [validation findings](phase4-validation.md). These historical
+instructions preserve reproducibility; the original experiment is not rerun for
+the final readout or application. See [reproduction](reproduction.md).
 
 ## Frozen intervention
 
@@ -111,12 +110,10 @@ Config/commit/environment/checksum mismatch stops; never edit identity or manife
 to bypass it. CPU resume is tested locally; cloud GPU interruption recovery still
 needs actual execution. Do not send patient records, tokens, MRI or weights back.
 
-Phase 5 final evaluation and Gradio require later authorisation after results
-review. The mandatory final code simplification, scientific-integrity review,
-judge-facing notebook and submission audit remain deferred until core work is done.
-OpenAI Codex assisted implementation; the student reviews, executes and explains it.
+I reviewed the loss behaviour, training curves and validation failures before
+interpreting the final held-out comparison. [Sources and assistance](sources-and-licensing.md).
 
-## Actual local verification — 2026-11-15
+## Historical local engineering checks — 2026-11-15
 
 Python 3.14.2 / torch 2.15.0+cpu: 68 tests passed, two CUDA tests skipped in
 40.50s; `pip check` found no broken requirements. Both training notebooks passed
@@ -129,5 +126,6 @@ Dice .97516930023, exact checkpoint-logit reload. Plot visually inspected;
 prediction closely matches the generated shape. Synthetic debugging only,
 not MRI performance; artifacts remain ignored under `tmp/phase4-local-smoke/`.
 Original Phase 2/3 notebooks, model, BCE config and data implementation have no
-content diff; four original reference hashes match. Actual T4 training,
-real-data smoke, cloud resume and Tversky validation remain unexecuted locally.
+content diff; four original reference hashes match. These local checks did not
+execute MRI training or validation. I completed the separate T4 experiment in
+Colab; its findings are in [the validation record](phase4-validation.md).

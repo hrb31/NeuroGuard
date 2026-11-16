@@ -1,55 +1,16 @@
-# VS Code -> GitHub -> browser Colab
+# Original data-audit workflow
 
-## Current Phase 5 workflow
+I completed the data audit and froze the patient split before training. This is
+the historical procedure for [01_data_exploration.ipynb](../notebooks/01_data_exploration.ipynb),
+retained for reproducibility. The completed results and app have a separate
+[reproduction guide](reproduction.md); the original experiments are not rerun
+as part of the final notebook or application demonstration.
 
-Phases 3–4 are complete on user-verified validation evidence. Use
-[04_final_evaluation.ipynb](../notebooks/04_final_evaluation.ipynb) and
-[the Phase 5 guide](phase5-evaluation.md): sections 1–8 preflight, explicit review
-gate in 9, single final inference in 10, aggregate/figure review in 11. Do not use
-Run all. No retraining or test threshold search. All results remain private.
-The source must be at an approved pushed SHA; preparation does not push it.
-
-## Historical Phase 3/4 workflow
-
-Phase 2 is complete on verified actual Colab evidence supplied by the user in
-the Phase 3 request. The original notebook below is preserved as historical
-reproduction instructions. **For BCE training use
-[02_train_bce.ipynb](../notebooks/02_train_bce.ipynb) and
-[the Phase 3 guide](phase3-training.md).** Phase 3 is now complete on user-verified
-validation results ([findings](phase3-validation.md)). For the current matched
-Tversky experiment use [03_train_tversky.ipynb](../notebooks/03_train_tversky.ipynb)
-and [the Phase 4 guide](phase4-training.md); preserve completed BCE artifacts. Never regenerate or overwrite the
-existing seed42 assignments or original Phase 2 evidence. The new notebook
-loads/validates them and writes to a separate experiment directory. Actual cloud
-execution is performed by the user; local synthetic checks do not establish
-real baseline/model metrics. Approval is still required before push.
-
-## Original Phase 2 reproduction workflow
-
-The local repository is authoritative. Edit only
-`notebooks/01_data_exploration.ipynb` and `src/` locally for Phase 2. Do not create another
-exploration notebook or fix the VS Code Colab extension. The user's browser Colab
-T4/CUDA check is reported successful; this phase has not remotely rerun it.
-
-## Code delivery (requires approval before push)
-
-The existing remote is `https://github.com/hrb31/NeuroGuard.git`. This work does
-not push, publish or deploy. After reviewing and authorising delivery:
-
-1. Review `git status`/diff. Stage only public code/config/docs and tests; keep
-   `AGENTS.md`, `local-context/`, data, credentials and outputs excluded.
-2. Commit the reviewed Phase 2 changes and push the approved commit.
-3. Obtain the full commit SHA with `git rev-parse HEAD`.
-4. Open `https://colab.research.google.com/github/hrb31/NeuroGuard/blob/COMMIT_SHA/notebooks/01_data_exploration.ipynb`,
-   replacing COMMIT_SHA. For a private repository, use Colab's Open notebook ->
-   GitHub, authorise browser access and select the repository/revision. Browser
-   permission to view the notebook is separate from runtime clone authentication.
-5. In notebook section 1 enter that same full SHA. Section 2 clones the repository,
-   checks out that exact commit and makes its `src` modules importable.
-
-Until a push is approved, a local-only preview is possible: upload the notebook
-to Colab to read it. Its bootstrap intentionally cannot fetch unpushed source.
-Do not run an old remote notebook and mistake it for these changes.
+The original notebook opens a reviewed full Git SHA in browser Colab, clones that
+same revision and imports its source modules. A GPU-enabled Colab environment
+was used for later experiments. Public GitHub source requires no access token.
+The private-repository authentication branch remains documented in the original
+notebook, but is unnecessary for this public repository.
 
 ## Run the numbered notebook sections
 
@@ -91,8 +52,8 @@ Do not run an old remote notebook and mistake it for these changes.
    fresh audit. All-zero background duplicates may be explicitly reviewed. Never
    change a seed because a model performs badly. Existing manifests cannot be
    overwritten with different assignments.
-10. Save a private evidence ZIP and SHA256. Return the printed pytest output,
-    summary/counts, review notes and figures to verify Phase 2. No training follows.
+10. Save a private evidence ZIP and SHA256. Retain the printed pytest output, summary/counts, review notes and figures
+    with the private audit evidence.
 
 ## Persistence and resets
 
@@ -102,17 +63,6 @@ After reset, repeat sections 1-10 with the same commit and Drive folder. Section
 re-audits files and verifies the existing immutable manifest before reusing it.
 Code revisions get separate run directories; the dataset split remains shared and
 frozen. Review warnings/errors instead of deleting a manifest to bypass them.
-For this directory-resolution fix, use the updated notebook in a clean runtime
-after the new code is approved and pushed. Rerun sections 1-8, return the root
-comparison summary, audit counts and figures, then review before freezing. Old
-wrapper-based audit reports remain historical evidence, not the canonical audit.
-
-Colab source edits do not update the local checkout. If an experimental fix is
-needed, apply it locally, review/commit/push with approval, and reopen at the new
-commit in a clean runtime. Copying a notebook to Drive does not synchronise it to
-GitHub. Before any public notebook submission, clear patient identifiers and
-unreviewed image outputs; publish only a licence/privacy-reviewed presentation.
-
 ## Phase 2 metadata and historical evidence gate
 
 On 2026-11-15 a live request to Kaggle's public
@@ -122,10 +72,11 @@ TCIA images corresponding to TCGA lower-grade glioma patients and manual FLAIR
 abnormality masks. Source citations include Buda, Saha & Mazurowski (2019), DOI
 10.1016/j.compbiomed.2019.05.002, and Mazurowski et al. (2017). This verifies release
 metadata only. Subsequent counts, channel meanings and integrity were verified
-in user Colab execution as recorded in the current README. The original workflow
+in my Colab audit as recorded in the final notebook. The original workflow
 above describes the evidence gates at that time. Attribution/noncommercial/share-alike obligations must be considered
 before redistributing any data-derived artifacts, separately from a code licence.
 
 The notebook uses the supported
 [KaggleHub versioned download and secret authentication APIs](https://github.com/Kaggle/kagglehub).
-Its actual cloud download and browser integration have not been executed here.
+I completed the actual data acquisition and audit in Colab; local synthetic
+checks alone do not establish dataset integrity or model performance.

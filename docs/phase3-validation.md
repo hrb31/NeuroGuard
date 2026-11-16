@@ -1,8 +1,8 @@
 # Verified Phase 3 validation findings
 
-Genuine Colab results verified and supplied by the user in the Phase 4 request
-on 2026-11-15. These are validation findings, not final test results, and were
-not recalculated by the agent. Cohort: 16 patients, 621 slices, 209 positive masks.
+I completed and reviewed this BCE validation run in Colab on 2026-11-15.
+These rounded validation aggregates are separate from the held-out test results.
+Cohort: 16 patients, 621 slices, 209 positive masks.
 U-Net: 1,942,577 parameters; seed42, Adam .001, batch16, max30/patience7;
 25 completed epochs, best checkpoint epoch18.
 
@@ -19,12 +19,13 @@ Always-empty pooled pixel accuracy was 99.05% despite zero positive-slice
 Dice/recall, illustrating background imbalance. The selected .8 threshold meets
 the predeclared <=10% empty-mask FP constraint. Compared with .5, it lowers empty
 FP and raises precision but loses recall and Dice, including on small regions.
-The user visually reviewed training curves and segmentation overlays: the model
+I reviewed the training curves and segmentation overlays: the model
 learns meaningful abnormality segmentation while missing some small annotations,
 particularly at the higher threshold. This does not establish clinical usefulness.
 
-These are rounded supplied aggregates. IoU, per-size eligible denominators,
-medium/large scores, exact run time and artifact hashes were not supplied; do not
-invent them. Full private Phase 3 reports stay unchanged. The machine-readable
-[aggregate reference](bce-validation-reference.json) supports the upcoming
-[Phase 4 comparison](phase4-training.md). No Tversky findings exist yet.
+This rounded summary does not include IoU, size denominators, medium/large scores,
+exact timing or checkpoint hashes; those values are not inferred from rounded
+metrics. The original private reports remain unchanged. The machine-readable
+[aggregate reference](bce-validation-reference.json) records the BCE comparison
+inputs. See the [completed Tversky validation findings](phase4-validation.md) and
+[final test readout](../notebooks/NeuroGuard_Final_Submission.ipynb).

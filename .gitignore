@@ -1,6 +1,7 @@
 # Private project instructions and reference documents
 /AGENTS.md
 /local-context/
+/local-assets/
 
 # Data and trained artifacts (review any derivative before sharing)
 /data/
@@ -68,7 +69,21 @@ Thumbs.db
 .idea/
 .codex/
 .agents/
+/.playwright-mcp/
+/.impeccable/
+/PRODUCT.md
+/DESIGN.md
+
+# Superseded directory indexes retained locally; use the root README.
+/src/README.md
+/tests/README.md
+/notebooks/README.md
+/results/README.md
+# Submission administration and recording preparation stay local.
+/docs/submission-checklist.md
+/docs/demo-script.md
 
 # Only curated, privacy-reviewed outputs belong in results
 /results/*
-!/results/README.md
+!/results/final-summary.json
+!/results/comparison.png

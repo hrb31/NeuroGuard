@@ -1,179 +1,129 @@
-# NeuroGuard
+# NeuroGuard: when better MRI recall creates more false alarms
 
-Brain MRI abnormality segmentation research prototype for the Veritas AI
-International High School Hackathon 2026, **AI + Health** track.
+**AI + Health · Solo submission · My own research idea**
 
-**This project is a prototype and is not medical advice.** It cannot diagnose a
-condition, rule out disease or guide medical decisions.
+**Pitch:** NeuroGuard lets a radiologist or imaging researcher compare predicted
+abnormal-region masks on compatible brain MRI slices and examine the cost of
+improving recall. **This project is a prototype and is not medical advice.**
 
-## Research question
+## The problem
 
-Does replacing binary cross-entropy with Tversky loss improve U-Net segmentation
-recall, particularly for small annotated regions, without unacceptable false
-positives? Improvement is a hypothesis, not a finding.
+A review aid must balance missed annotated abnormalities against false alarms.
+High pixel accuracy can hide missed foreground because almost every pixel is
+background. No clinical benefit or diagnostic safety has been established here.
 
-Three comparison levels: an always-empty mask (Model 0), a small U-Net trained
-with `BCEWithLogitsLoss` (Model 1), and the identical U-Net with Tversky loss
-(`alpha=.3` FP, `beta=.7` FN; Model 2, completed Phase 4). The experiment
-changes the loss while preserving data, preprocessing, architecture, seed policy,
-optimisation budget and selection rules.
+## What I built
 
-## Current status
+I developed a local Gradio application that accepts an original 256 × 256, three-channel LGG MRI
+TIFF and shows its FLAIR image, predicted binary mask and coloured overlay. Users
+can compare BCE and Tversky U-Nets at frozen operating points. Arbitrary photographs,
+DICOM studies and other MRI domains are unsupported. Inference requires the
+authorised original checkpoints; no public deployment or weights are bundled.
 
-Phase 2 is complete on actual Colab evidence verified by the user and supplied
-in the Phase 3 request: **110 patients, 3,929 image/mask pairs**, 1,373 positive
-and 2,556 empty masks, dimensions 256×256×3, zero integrity errors and zero
-cross-patient duplicate groups. Representative small/large/empty overlays and
-preprocessing were reviewed; this was not exhaustive manual annotation validation.
+## What I added
 
-The release README identifies stored channels as pre-contrast (0), FLAIR (1) and
-post-contrast (2); missing sequences may substitute FLAIR. Masks annotate
-FLAIR-associated abnormalities. These are stored MRI sequences, not RGB colours.
+I asked whether a recall-oriented loss could improve detection of small annotated
+regions without an unacceptable increase in false positives. My contribution is
+the controlled loss comparison, patient-level split, size analysis and honest
+failure analysis, rather than a claim that a U-Net itself is new.
 
-The immutable seed42 patient split is saved privately in Drive:
+## How it works
 
-| Subset | Patients | Slices | Positive-mask slices |
-|---|---:|---:|---:|
-| Training | 77 | 2,719 | 934 |
-| Validation | 16 | 621 | 209 |
-| Test | 17 | 589 | 230 |
+Mateusz Buda's LGG dataset v2 contains 3,929 image/mask pairs from 110 patients.
+The frozen split uses 77/16/17 patients and 2,719/621/589 slices for training,
+validation and test. Patients never cross splits. Both learned models use the
+same 1,942,577-parameter U-Net, preprocessing, seed 42 and training/selection rules.
+Only the loss differs: BCE versus per-slice Tversky (FP α=.3, FN β=.7, ε=1e−6).
+I fixed size cutoffs from training and selected thresholds using validation alone.
 
-**Phase 3 is complete on user-verified Colab validation evidence:** 25 epochs,
-best epoch 18. The always-empty baseline has Dice/recall 0, empty FP 0% and pooled
-pixel accuracy 99.05%. BCE validation findings:
+## Results on 17 unseen test patients
 
-| Metric | BCE t=.5 | BCE selected t=.8 |
-|---|---:|---:|
-| Positive-slice patient-macro Dice | 0.73794 | 0.69258 |
-| Recall | 0.81314 | 0.66549 |
-| Precision | 0.73336 | 0.81206 |
-| Empty-mask FP rate | 19.175% | 9.466% |
-| Small-region Dice | 0.62082 | 0.56990 |
-| Small-region recall | 0.76215 | 0.53931 |
+| Approach (threshold) | Positive Dice | Recall | Small recall | Empty-mask FP rate |
+|---|---:|---:|---:|---:|
+| Always empty | 0.000 | 0.000 | 0.000 | 0.00% |
+| BCE (0.5) | 0.767 | 0.795 | 0.671 | 27.02% |
+| Tversky (0.5, fallback) | 0.777 | 0.864 | 0.789 | **85.79%** |
+| BCE (0.8, validation-selected) | 0.670 | 0.602 | 0.407 | 14.48% |
 
-Threshold .8 satisfies the frozen <=10% empty-mask FP constraint, with lower
-recall, including on small annotations. Curves/overlays were reviewed by the user.
-See [verified aggregate evidence and limitations](docs/phase3-validation.md).
-These are validation findings, not final test results.
+Dice/recall average positive slices within each patient, then patients equally;
+small recall restricts this calculation to small annotations. FP rate is the
+fraction of 359 empty-mask slices with any predicted foreground. Always-empty
+achieved 98.97% pixel accuracy despite zero positive Dice/recall.
 
-**Phase 4 is complete on user-verified Colab validation evidence:** 30 epochs,
-best epoch 23; same 1,942,577-parameter U-Net, Tversky alpha=.3/beta=.7,
-smooth=1e-6, per-slice batch mean.
+**My hypothesis is only partially supported.** At 0.5, Tversky improved recall
+by 6.84 percentage points (95% paired patient-bootstrap interval 3.41–10.47) and
+small-region recall by 11.79 pp (4.95–19.97), with severe false positives. The Dice
+difference interval, −1.96 to +3.87 pp, does not firmly establish superiority.
+BCE 0.8 met the 10% validation FP research criterion but failed it on test;
+Tversky met it on neither. I reviewed missed small regions and foreground predicted on empty-mask slices.
 
-| Validation metric | BCE t=.5 | Tversky t=.5 / selected fallback |
-|---|---:|---:|
-| Positive-slice patient-macro Dice | .73794 | .79822936 |
-| Recall | .81314 | .88439719 |
-| Precision | .73336 | .75929147 |
-| Small-region Dice | .62082 | .68867639 |
-| Small-region recall | .76215 | .82965727 |
-| Empty-mask FP slice rate | .19175 | .73300971 |
+## Limits and next steps
 
-Tversky improved validation recall but failed the FP guardrails: the hypothesis
-is only partially supported on validation. No tested Tversky threshold met the 10%
-constraint; selected .5 is labelled `fp_constraint_unmet_fallback`. BCE selected .8
-meets the constraint. Reviewed figures include a small miss, a successful medium
-region, imperfect large boundaries and empty-mask false positives. See
-[Phase 4 findings](docs/phase4-validation.md).
+One split, one seed, 2D slices and a small cohort limit generalisation; there is
+no external, demographic fairness or clinical validation. Next, I would investigate false-positive suppression and external validation
+under a new protocol.
 
-**Phase 5 evaluation code/notebook is prepared for user execution after review.**
-No actual held-out test metrics have been generated here; no working Gradio demo yet.
+## Sources and assistance
 
-## Data and evaluation
+[Dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
+([CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/));
+[U-Net](https://arxiv.org/abs/1505.04597), [Tversky](https://arxiv.org/abs/1706.05721),
+[PyTorch](https://pytorch.org/), [Gradio](https://www.gradio.app/).
+I directed the experimental design, model comparison and analysis. I used
+[OpenAI ChatGPT](https://chatgpt.com/) and [Codex](https://openai.com/codex/)
+to accelerate implementation, debugging, testing and documentation. Results come
+from my completed Colab experiments. [Full credits](docs/sources-and-licensing.md).
 
-[Mateusz Buda's LGG MRI segmentation dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation),
-version 2, is listed as CC BY-NC-SA 4.0 with TCIA/TCGA provenance. Review release
-and upstream terms before downloading or redistributing derivatives. Data
-downloads happen only in browser Colab, never in the Windows source workspace.
-The existing canonical-root resolver compares all TIFF filenames and hashes
-before selecting between identical directory copies; conflicting copies stop.
+---
 
-Never regenerate the frozen assignments. Patient-disjoint validation selects
-checkpoints and thresholds; test evaluation stays locked until Phase 5. Primary
-Dice averages positive slices within each eligible patient, then patients equally.
-Report recall/precision, empty-mask false positives, training-derived size groups
-and denominators separately. Background-heavy pixel accuracy can hide complete
-failure to detect foreground. See [the frozen protocol](docs/evaluation-protocol.md).
+## Application, notebook and reproduction
 
-## Run Phase 5
+The write-up above is the **official submission write-up**. Start with the
+[final research notebook](notebooks/NeuroGuard_Final_Submission.ipynb) for saved
+tables, uncertainty, size analysis and reviewed failure descriptions. The
+[exact aggregate results and provenance](results/final-summary.json) retain the
+original report hashes. No research experiment is rerun by the results readout.
 
-Use [04_final_evaluation.ipynb](notebooks/04_final_evaluation.ipynb) and the
-[Phase 5 guide](docs/phase5-evaluation.md). In a fresh browser Colab T4, run sections
-1–8 and stop for preflight review. Sections 9–10 require explicit approval before
-test predictions. Preserve all original runs and the frozen manifest. No retraining
-or new threshold search. Source publication still requires separate approval.
+![Saved aggregate results: recall gains and false alarms](results/comparison.png)
 
-## Completed Phase 4 workflow
+## Run the Gradio application locally
 
-Use [03_train_tversky.ipynb](notebooks/03_train_tversky.ipynb) in browser Colab
-with a T4. The [Phase 4 guide](docs/phase4-training.md) gives exact inputs, numbered
-execution steps, the smoke-review gate, resume instructions and artifacts to return.
-The repository is public; no GitHub token is needed. Do not rerun completed BCE.
-Source must be available at an approved
-full Git commit; opening the notebook alone does not clone its modules. No push
-or publication occurs automatically.
-
-The [frozen BCE configuration](configs/bce.json) uses a 3→1 U-Net with four
-downsamplings (16/32/64/128/256), **1,942,577 trainable parameters**, Adam .001,
-batch16, max30 epochs, patience7 and
-seed42. Outputs are logits. Paired preprocessing and training augmentation reuse
-Phase 2. Private Drive checkpoints include optimiser/RNG state, configuration,
-manifest identity, code SHA, environment, histories and best validation weights.
-The [Tversky configuration](configs/tversky.json) changes loss and experiment
-identity only. Its per-slice mean includes empty masks, with smoothing `1e-6` in
-numerator and denominator. Empty-mask gradients can be extremely small; the
-Phase 4 guide documents this limitation before the definitive run.
-
-Local synthetic checks (install the appropriate CPU/GPU torch build separately):
+With PyTorch installed in a project virtual environment:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-training.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-demo.txt
+.\.venv\Scripts\python.exe app.py
+```
+
+Open **http://127.0.0.1:7860**. CPU is the default. Upload a single original
+**256 × 256 × 3 uint8 LGG TIFF**, at most **4 MiB**, confirm compatibility and
+choose a frozen operating point. The app displays stored FLAIR channel 1,
+a lossless binary mask and a coloured overlay. Comparison modes use the same
+input. JPEG/PNG photographs, DICOM studies, volumes and other MRI domains are
+unsupported. File structure checks cannot establish medical provenance.
+
+**The original model weights and sample MRI images are private and not bundled.**
+Independent inference requires the authentic checksum-verified checkpoints in
+ignored `local-assets/`. The local address is **not a public deployment**.
+Judges can read and re-execute the saved-aggregate notebook without personal Drive
+access. See [installation, weight paths and exact smoke-test steps](docs/demo.md).
+
+## Methodology and checks
+
+[Reproduction and original research record](docs/reproduction.md) ·
+[Frozen evaluation protocol](docs/evaluation-protocol.md) ·
+[Sources, AI assistance and licensing](docs/sources-and-licensing.md).
+
+The four original research notebooks, configurations and experimental evidence
+are preserved. MRI failure panels remain private; their reviewed observations
+are described in the final notebook. No diagnostic confidence score is reported.
+
+```powershell
 .\.venv\Scripts\python.exe -m pytest -q
 .\.venv\Scripts\python.exe -m pip check
 ```
 
-`requirements-training.txt` deliberately preserves Colab's installed CUDA torch.
-Record the actual cloud environment for the matched experiment. Dependency ranges
-are not a tested cross-platform lock. Audit-only tests also work without torch;
-training tests then skip explicitly.
-
-## Repository and remaining roadmap
-
-- `notebooks/01_data_exploration.ipynb`: original Phase 2 audit/evidence workflow.
-- `notebooks/02_train_bce.ipynb`: Phase 3 validation baseline and BCE experiment.
-- `notebooks/03_train_tversky.ipynb`: matched Phase 4 training and validation comparison.
-- `notebooks/04_final_evaluation.ipynb`: preflight, explicit approval, fixed held-out comparison.
-- `src/`: data integrity, preprocessing, model, metrics, loaders, training, final evaluation and plots.
-- `configs/bce.json`, `configs/tversky.json`, `tests/`, `docs/`: frozen settings, checks and reproduction.
-- `results/`: only future reviewed summaries; `app.py`: future Gradio placeholder.
-
-Phases 1–4 complete on user-verified evidence; Phase 5 locked final
-three-model evaluation/error analysis prepared locally, actual test execution pending; Phase 6 Gradio/demo/submission. A mandatory
-final refinement and scientific/submission audit follows the core work, including
-a separate polished judge-facing notebook with genuine reviewed outputs. It is
-deferred until core evaluation and Gradio are complete.
-
-Data, patient identifiers, checkpoints, credentials, environments, private context
-and unreviewed notebook outputs stay out of Git. Do not publish derivative images
-or weights without licensing/privacy review. No code licence has been selected.
-
-## Sources and limitations
-
-Dataset: [release](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
-and [author's description](https://mateuszbuda.com/2017/12/01/brainseg.html).
-Architecture: [Ronneberger et al., U-Net](https://arxiv.org/abs/1505.04597).
-Loss: [Salehi et al., Tversky](https://arxiv.org/abs/1706.05721).
-Implementation guidance: [PyTorch reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html),
-[BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html)
-and [checkpoint guide](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html).
-
-Code, tests, notebooks and documentation were prepared with **OpenAI Codex**
-assistance. The student reviews the design, executes and validates experiments,
-interprets findings and must understand and explain the methods.
-
-Limits include a small cohort, correlated 2D slices, dataset-specific annotations,
-sequence substitution, possible near-duplicates not caught by exact hashes and
-no external/clinical validation. Size strata are annotation burden, not 3D lesion
-volume or demographic fairness. Assess public demographic metadata and report
-when missing attributes or inadequate counts prevent meaningful subgroup checks.
-Report misses, false alarms and negative results honestly.
+Tests use synthetic data/weights and do not measure MRI performance. Genuine
+local application checks on positive-mask and empty-mask TIFF examples also
+verified upload-to-output parity at the three frozen operating points; these are
+application smoke tests, not a repetition of the held-out evaluation.

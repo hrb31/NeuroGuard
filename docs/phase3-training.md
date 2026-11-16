@@ -1,23 +1,21 @@
-# Phase 3 execution and evidence
+# Original BCE training procedure
 
-**Completed on user-verified Colab validation evidence supplied 2026-11-15.**
-See [verified findings](phase3-validation.md). Preserve the original BCE artifacts;
-do not rerun this notebook for Phase 4. Use [the Tversky guide](phase4-training.md).
-The execution instructions below document the completed Phase 3 workflow.
-
-Phase 2 counts/channel review and split completion are supplied as verified by
-the user in the Phase 3 request. This local implementation does not rerun that
-cloud audit. Never replace the saved assignments or original evidence.
+I completed the BCE experiment in Colab (25 epochs; best checkpoint at epoch 18).
+See [validation findings](phase3-validation.md). This document preserves the
+historical execution procedure, not a request to retrain. The final readout and
+application use the completed artifacts; see [reproduction](reproduction.md).
+The original patient assignments and experimental evidence remain frozen.
 
 ## Before opening Colab
 
-After reviewing the public diff and explicitly approving a push, obtain the full
-40-character commit with `git rev-parse HEAD`. Open:
+The original training source was pinned to full Git commit
+`454501448551cd0f05f4b74f7f77f9a67b9a0aab`. The notebook URL template is:
 
 `https://colab.research.google.com/github/hrb31/NeuroGuard/blob/COMMIT_SHA/notebooks/02_train_bce.ipynb`
 
 Replace COMMIT_SHA with that exact commit. A local uploaded notebook cannot fetch
-unpublished source. The repository is public and requires no GitHub token. Do not download MRI data locally or upload private patient data.
+unpublished source. The repository is public and requires no GitHub token. The original experiment
+acquired public MRI data inside Colab; private clinical data is unsupported.
 
 Have the **original Phase 2 Frozen manifest SHA256** ready (section 9 output or
 the original evidence archive). It is the canonical JSON identity stored under
@@ -39,13 +37,13 @@ independent identity check; do not paste an arbitrary newly generated value.
 9. Compute the always-empty validation baseline and eligible counts.
 10. Run the 100-step four-training-slice debugging check, inspect its loss, Dice
     and overlay, and set `SMOKE_REVIEWED=True` only if satisfied. Loss decrease is
-    a minimum check, not proof that foreground is fitted. Return failures for review.
+    a minimum check, not proof that foreground is fitted. Record debugging failures before proceeding.
 11. Type TRAIN to begin/resume the frozen BCE fit. A fresh seeded model is built;
     smoke weights/optimiser are discarded. Do not silently alter batch or budget.
 12. Evaluate the selected best model on validation at .5 and all declared search
     thresholds; save reports, curves and representative FLAIR predictions.
 13. Save run records/checksums and verify the original manifest file is unchanged.
-14. Return the review summary and review figures. Stop before Phase 4.
+14. Retain the review summary and figures in the private run bundle.
 
 If the T4 cannot fit batch16, stop and record the OOM. The proposed fallback is
 batch8 for both definitive arms, but this material protocol change requires a
@@ -117,7 +115,7 @@ does not silently roll back. Load only your own trusted saved checkpoint: full
 training state uses Python pickle (`weights_only=False`). No manual individual
 checkpoint management is needed for normal resume.
 
-## Return for review
+## Recorded outputs
 
 Copy section 14's `review_summary.json`, pytest output, smoke result/overlay,
 training curve and representative validation overlays. It includes baseline and
@@ -128,6 +126,6 @@ Report errors and interruptions. Do not send tokens, raw TIFFs, patient-level
 records, manifest or full weights. Pixel accuracy is supplementary: a predictor
 can score highly by returning background everywhere while detecting nothing.
 
-Phase 3 completion rests on genuine user-verified Colab outputs, not local
-synthetic tests. Final three-model test evaluation, Gradio and mandatory
-submission refinement remain later phases.
+These findings come from my completed Colab run; local synthetic tests are
+engineering checks. The final three-approach test comparison is in the
+[submission notebook](../notebooks/NeuroGuard_Final_Submission.ipynb).

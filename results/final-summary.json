@@ -1,0 +1,397 @@
+{
+  "description": "Curated aggregate extract of completed Phase 5 reports; no experimental recomputation.",
+  "provenance": {
+    "evaluation_source_commit": "d26811abb564680075030d7970633b4e681a98d4",
+    "manifest_sha256": "7514044281736b609e9d1c09c342a3f2514d0a2ca4dea9c4ce0d466cd86fe493",
+    "checkpoint_sha256": {
+      "bce": "ba0ce014980ecac8e8670357f2f2eff2484c719e1c2a7080ec5367dc85701eda",
+      "tversky": "1828ab28fe7077923447d6fe3f31a297173b14b93db6323ad68f9349bfe95708"
+    },
+    "source_report_sha256": {
+      "final_test_metrics.json": "b74428a4f2818bc9a60654c00081c308054cb08cae500084d3f6e9b876eb3872",
+      "paired_patient_bootstrap.json": "bdd470d678b0508a18fa2d1767821ff384edc5c13311586b0b84b6431abb51ee",
+      "comparison.json": "2907f3bee37a086c9ad5979c243b6180b0357a874cf580854d085b70f67592be",
+      "review_summary.json": "9587b88dc944c16b4521f16559ddbf4605313c99182aa4cbf8ed33434970d14a"
+    },
+    "verification": "Saved reports cross-checked against the supplied final results; exported checkpoint bytes verified separately."
+  },
+  "dataset": {
+    "name": "Mateusz Buda LGG MRI Segmentation",
+    "version": 2,
+    "patients": 110,
+    "pairs": 3929,
+    "image_shape": [
+      256,
+      256,
+      3
+    ]
+  },
+  "split": {
+    "train": {
+      "patients": 77,
+      "slices": 2719
+    },
+    "validation": {
+      "patients": 16,
+      "slices": 621
+    },
+    "test": {
+      "patients": 17,
+      "slices": 589,
+      "positive_slices": 230,
+      "empty_slices": 359
+    }
+  },
+  "size_cutoffs": [
+    0.0160675048828125,
+    0.0372467041015625
+  ],
+  "operating_points": {
+    "always_empty": {
+      "model": null,
+      "threshold": null,
+      "status": "non_learning_baseline"
+    },
+    "bce_default": {
+      "model": "bce",
+      "threshold": 0.5,
+      "status": "common_threshold"
+    },
+    "tversky_default": {
+      "model": "tversky",
+      "threshold": 0.5,
+      "status": "common_threshold"
+    },
+    "bce_selected": {
+      "model": "bce",
+      "threshold": 0.8,
+      "status": "constraint_met"
+    },
+    "tversky_selected": {
+      "model": "tversky",
+      "threshold": 0.5,
+      "status": "fp_constraint_unmet_fallback"
+    }
+  },
+  "metrics": {
+    "always_empty": {
+      "positive_patient_macro": {
+        "dice": 0.0,
+        "iou": 0.0,
+        "patients": 17,
+        "precision": 0.0,
+        "recall": 0.0,
+        "slices": 230
+      },
+      "size_groups": {
+        "large": {
+          "dice": 0.0,
+          "iou": 0.0,
+          "patients": 8,
+          "precision": 0.0,
+          "recall": 0.0,
+          "slices": 57
+        },
+        "medium": {
+          "dice": 0.0,
+          "iou": 0.0,
+          "patients": 15,
+          "precision": 0.0,
+          "recall": 0.0,
+          "slices": 85
+        },
+        "small": {
+          "dice": 0.0,
+          "iou": 0.0,
+          "patients": 17,
+          "precision": 0.0,
+          "recall": 0.0,
+          "slices": 88
+        }
+      },
+      "empty": {
+        "false_positive_rate": 0.0,
+        "mean_foreground_fraction": 0.0,
+        "patients": 17,
+        "pooled_background_fp_rate": 0.0,
+        "slices": 359
+      },
+      "pooled_all_slices": {
+        "dice": 0.0,
+        "fn": 395705,
+        "fp": 0,
+        "iou": 0.0,
+        "pixel_accuracy": 0.9897487620951162,
+        "precision": null,
+        "recall": 0.0,
+        "tn": 38204999,
+        "tp": 0
+      }
+    },
+    "bce_default": {
+      "positive_patient_macro": {
+        "dice": 0.7672636816335711,
+        "iou": 0.6679464893751712,
+        "patients": 17,
+        "precision": 0.7782331054942698,
+        "recall": 0.7952068742376774,
+        "slices": 230
+      },
+      "size_groups": {
+        "large": {
+          "dice": 0.8675999817689779,
+          "iou": 0.7752069310978027,
+          "patients": 8,
+          "precision": 0.8901559645426834,
+          "recall": 0.8629816867119254,
+          "slices": 57
+        },
+        "medium": {
+          "dice": 0.8373802939356964,
+          "iou": 0.7364450960552514,
+          "patients": 15,
+          "precision": 0.8489530415158021,
+          "recall": 0.8639104050419278,
+          "slices": 85
+        },
+        "small": {
+          "dice": 0.604711018878294,
+          "iou": 0.48449841283282646,
+          "patients": 17,
+          "precision": 0.6068228857133106,
+          "recall": 0.6707390649546474,
+          "slices": 88
+        }
+      },
+      "empty": {
+        "false_positive_rate": 0.27019498607242337,
+        "mean_foreground_fraction": 0.002210909277615773,
+        "patients": 17,
+        "pooled_background_fp_rate": 0.002210909277615773,
+        "slices": 359
+      },
+      "pooled_all_slices": {
+        "dice": 0.8132597098473946,
+        "fn": 47897,
+        "fp": 111830,
+        "iou": 0.685288699301526,
+        "pixel_accuracy": 0.99586207028763,
+        "precision": 0.7566998376983626,
+        "recall": 0.8789578094792838,
+        "tn": 38093169,
+        "tp": 347808
+      }
+    },
+    "bce_selected": {
+      "positive_patient_macro": {
+        "dice": 0.6695148686718186,
+        "iou": 0.5656633368054472,
+        "patients": 17,
+        "precision": 0.8496805356782031,
+        "recall": 0.6019441850192853,
+        "slices": 230
+      },
+      "size_groups": {
+        "large": {
+          "dice": 0.8065053710952736,
+          "iou": 0.7000889729858332,
+          "patients": 8,
+          "precision": 0.9440957097680875,
+          "recall": 0.7370566120127131,
+          "slices": 57
+        },
+        "medium": {
+          "dice": 0.759969490465636,
+          "iou": 0.6456702230002608,
+          "patients": 15,
+          "precision": 0.9177200120730156,
+          "recall": 0.6906303992853255,
+          "slices": 85
+        },
+        "small": {
+          "dice": 0.47006742728595746,
+          "iou": 0.36179644242272263,
+          "patients": 17,
+          "precision": 0.6935084920757214,
+          "recall": 0.40714922984470575,
+          "slices": 88
+        }
+      },
+      "empty": {
+        "false_positive_rate": 0.14484679665738162,
+        "mean_foreground_fraction": 0.0010268442478020543,
+        "patients": 17,
+        "pooled_background_fp_rate": 0.0010268442478020543,
+        "slices": 359
+      },
+      "pooled_all_slices": {
+        "dice": 0.7993125388126859,
+        "fn": 102239,
+        "fp": 45125,
+        "iou": 0.6657124061429576,
+        "pixel_accuracy": 0.9961823494203629,
+        "precision": 0.866727113242821,
+        "recall": 0.7416282331534856,
+        "tn": 38159874,
+        "tp": 293466
+      }
+    },
+    "tversky_default": {
+      "positive_patient_macro": {
+        "dice": 0.7769020619376787,
+        "iou": 0.6798325607607492,
+        "patients": 17,
+        "precision": 0.7523057067956188,
+        "recall": 0.8636224428413921,
+        "slices": 230
+      },
+      "size_groups": {
+        "large": {
+          "dice": 0.8729472402567438,
+          "iou": 0.7840601829390934,
+          "patients": 8,
+          "precision": 0.8938430697689881,
+          "recall": 0.871656739062731,
+          "slices": 57
+        },
+        "medium": {
+          "dice": 0.8429969583838016,
+          "iou": 0.7441639009222786,
+          "patients": 15,
+          "precision": 0.8141640694856213,
+          "recall": 0.9038928374041915,
+          "slices": 85
+        },
+        "small": {
+          "dice": 0.6399544518905097,
+          "iou": 0.5183683263183279,
+          "patients": 17,
+          "precision": 0.6038133168031917,
+          "recall": 0.7886547217793092,
+          "slices": 88
+        }
+      },
+      "empty": {
+        "false_positive_rate": 0.8579387186629527,
+        "mean_foreground_fraction": 0.011953497331454562,
+        "patients": 17,
+        "pooled_background_fp_rate": 0.011953497331454562,
+        "slices": 359
+      },
+      "pooled_all_slices": {
+        "dice": 0.6384616616288937,
+        "fn": 36834,
+        "fp": 369598,
+        "iou": 0.4689266865542145,
+        "pixel_accuracy": 0.9894708656090832,
+        "precision": 0.49263729822408364,
+        "recall": 0.9069155052374875,
+        "tn": 37835401,
+        "tp": 358871
+      }
+    },
+    "tversky_selected": {
+      "positive_patient_macro": {
+        "dice": 0.7769020619376787,
+        "iou": 0.6798325607607492,
+        "patients": 17,
+        "precision": 0.7523057067956188,
+        "recall": 0.8636224428413921,
+        "slices": 230
+      },
+      "size_groups": {
+        "large": {
+          "dice": 0.8729472402567438,
+          "iou": 0.7840601829390934,
+          "patients": 8,
+          "precision": 0.8938430697689881,
+          "recall": 0.871656739062731,
+          "slices": 57
+        },
+        "medium": {
+          "dice": 0.8429969583838016,
+          "iou": 0.7441639009222786,
+          "patients": 15,
+          "precision": 0.8141640694856213,
+          "recall": 0.9038928374041915,
+          "slices": 85
+        },
+        "small": {
+          "dice": 0.6399544518905097,
+          "iou": 0.5183683263183279,
+          "patients": 17,
+          "precision": 0.6038133168031917,
+          "recall": 0.7886547217793092,
+          "slices": 88
+        }
+      },
+      "empty": {
+        "false_positive_rate": 0.8579387186629527,
+        "mean_foreground_fraction": 0.011953497331454562,
+        "patients": 17,
+        "pooled_background_fp_rate": 0.011953497331454562,
+        "slices": 359
+      },
+      "pooled_all_slices": {
+        "dice": 0.6384616616288937,
+        "fn": 36834,
+        "fp": 369598,
+        "iou": 0.4689266865542145,
+        "pixel_accuracy": 0.9894708656090832,
+        "precision": 0.49263729822408364,
+        "recall": 0.9069155052374875,
+        "tn": 37835401,
+        "tp": 358871
+      }
+    }
+  },
+  "bootstrap": {
+    "replicates": 1000,
+    "seed": 42,
+    "confidence": 0.95,
+    "unit": "patient",
+    "interval": "percentile",
+    "common_threshold": {
+      "positive_dice": {
+        "ci": [
+          -0.01957809453454378,
+          0.03873851339616554
+        ],
+        "defined_replicates": 1000,
+        "difference": 0.009638380304107672,
+        "eligible_patients": 17,
+        "undefined_replicates": 0
+      },
+      "positive_recall": {
+        "ci": [
+          0.03406505480603165,
+          0.10470458873053061
+        ],
+        "defined_replicates": 1000,
+        "difference": 0.06841556860371456,
+        "eligible_patients": 17,
+        "undefined_replicates": 0
+      },
+      "small_dice": {
+        "ci": [
+          -0.023528102692871547,
+          0.08858343678329453
+        ],
+        "defined_replicates": 1000,
+        "difference": 0.03524343301221566,
+        "eligible_patients": 17,
+        "undefined_replicates": 0
+      },
+      "small_recall": {
+        "ci": [
+          0.04950370656651992,
+          0.1997050396821348
+        ],
+        "defined_replicates": 1000,
+        "difference": 0.11791565682466185,
+        "eligible_patients": 17,
+        "undefined_replicates": 0
+      }
+    }
+  }
+}
