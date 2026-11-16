@@ -2,9 +2,7 @@
 
 **AI + Health · Solo submission · My own research idea**
 
-**Pitch:** NeuroGuard helps radiologists or imaging researchers compare predicted
-abnormal-region masks on compatible brain MRI slices and examine the cost of
-improving recall. **This project is a prototype and is not medical advice.**
+**Pitch:** NeuroGuard helps radiologists and medical imaging researchers examine brain MRI scans by highlighting potentially abnormal regions and comparing how different models balance detecting abnormalities against false alarms. **This project is a prototype and is not medical advice.**
 
 ## The problem
 
