@@ -87,15 +87,12 @@ not additional evaluation evidence. Original MRI and smoke screenshots remain pr
 The server binds to loopback only, disables Gradio analytics and run history,
 and creates no public tunnel. No model, dataset or remote API download occurs in
 the application. Uploads and rendered images use ignored `tmp/gradio/`; Gradio
-checks every minute for files older than five minutes. Close the app after use;
-clear this cache before recording or handing over the machine. Do not expose this
+checks every minute for files older than five minutes. Close the app and clear
+this cache after use. Do not expose this
 local prototype on an untrusted network. Private directories are blocked from
 Gradio file serving; that is additional protection, not a hosting security audit.
 
 Public code and saved aggregate readouts can be understood without personal Drive
 access. **Independent inference still requires authorised weights and a compatible
-input; neither is bundled or publicly hosted.** The reliable fallback is a local
-screen recording after a real smoke test. A small authorised model release could
-remove the weights barrier later; I have not released weights or MRI examples, deployed the app, or enabled a
-public tunnel. A recorded demonstration with specifically approved images is
-the fastest practical viewing option; it does not require distributing weights.
+input; neither is bundled or publicly hosted.** No public model weights, MRI
+examples, deployment or inference tunnel are provided by this repository.
