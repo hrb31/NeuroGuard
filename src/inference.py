@@ -5,6 +5,7 @@ from threading import Lock
 import numpy as np
 import tifffile
 import torch
+from PIL import Image
 
 from .dataset import file_sha256
 from .model import UNet
@@ -26,13 +27,22 @@ MAX_FILE_BYTES = 4 * 1024 * 1024
 
 
 def read_scan(path):
-    """Bound TIFF decoding before allocating pixels; never convert RGB uploads."""
+    """Read stored MRI channels without colour conversion or rescaling."""
     path = Path(path)
-    if path.suffix.lower() not in {'.tif', '.tiff'}:
-        raise ValueError('Upload the original LGG three-channel .tif or .tiff image, not a mask or screenshot.')
+    if path.suffix.lower() not in {'.tif', '.tiff', '.png'}:
+        raise ValueError('Upload an original LGG TIFF or lossless three-channel PNG export, not a mask or screenshot.')
     if not path.is_file() or not 0 < path.stat().st_size <= MAX_FILE_BYTES:
-        raise ValueError('The TIFF must be nonempty and no larger than 4 MiB.')
+        raise ValueError('The image must be nonempty and no larger than 4 MiB.')
     try:
+        if path.suffix.lower() == '.png':
+            with Image.open(path) as source:
+                if (source.format != 'PNG' or source.size != (256, 256)
+                        or source.mode != 'RGB' or getattr(source, 'n_frames', 1) != 1):
+                    raise ValueError('Expected a single 256 × 256 three-channel PNG preserving original MRI channels; grayscale previews and masks are unsupported.')
+                image = np.array(source)
+                if image.dtype != np.uint8:
+                    raise ValueError('Expected uint8 MRI channels.')
+                return image
         with tifffile.TiffFile(path) as source:
             if (len(source.pages) != 1 or source.pages[0].shape != (256, 256, 3)
                     or source.pages[0].dtype != np.dtype('uint8')):
@@ -41,7 +51,7 @@ def read_scan(path):
     except ValueError:
         raise
     except Exception as exc:
-        raise ValueError('Cannot decode this TIFF. Use an unmodified, compatible LGG image.') from exc
+        raise ValueError('Cannot decode this image. Use a compatible LGG TIFF or lossless PNG export.') from exc
     return image
 
 
@@ -97,7 +107,7 @@ class Segmenter:
         if choice not in POINTS:
             raise ValueError('Choose one of the documented frozen operating points.')
         if not path:
-            raise ValueError('Upload a compatible TIFF image first.')
+            raise ValueError('Upload a compatible TIFF or three-channel PNG image first.')
         image = read_scan(path)
         x = torch.from_numpy(prepare_scan(image).copy())[None].to(self.device)
         outputs = []

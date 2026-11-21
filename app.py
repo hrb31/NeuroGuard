@@ -48,11 +48,13 @@ def build_app(segmenter):
                     'Use public, de-identified examples only.')
         with gr.Row():
             with gr.Column(scale=1, min_width=290):
-                upload = gr.File(label='Compatible MRI slice · TIFF · up to 4 MiB',
-                                 file_types=['.tif', '.tiff'], type='filepath')
+                upload = gr.File(label='Compatible MRI slice · TIFF or PNG · up to 4 MiB',
+                                 file_types=['.tif', '.tiff', '.png'], type='filepath')
                 gr.Markdown('Use an **original LGG 256 × 256 × 3 uint8 TIFF**: stored pre-contrast / FLAIR / '
                             'post-contrast channels (including dataset substitutions). '
-                            'JPEG, PNG, DICOM and arbitrary RGB images are unsupported. '
+                            'Lossless three-channel PNG exports preserving those same MRI pixels are also accepted. '
+                            'Use the PNGs directly inside demo_samples/, not its flair/ or masks/ folders. '
+                            'JPEG, DICOM and arbitrary RGB images are unsupported. '
                             'File shape checks cannot establish MRI provenance.')
                 confirmed = gr.Checkbox(label='I confirm this is a compatible public, de-identified LGG research image.', value=False)
                 choice = gr.Dropdown(label='Model and frozen threshold', choices=list(POINTS), value=next(iter(POINTS)))

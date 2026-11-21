@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 import tifffile
 import torch
+from PIL import Image
 
 from src.dataset import file_sha256
 from src.inference import POINTS, Segmenter, prepare_scan, read_scan, render_prediction
@@ -49,6 +50,22 @@ def test_original_preprocessing_and_flair_parity(scan):
     np.testing.assert_array_equal(overlay[~mask], np.repeat(flair[..., None], 3, axis=2)[~mask])
     np.testing.assert_array_equal(binary > 0, mask)
     assert set(np.unique(binary)) == {0, 255}
+
+
+def test_png_preserves_tiff_channels_and_preprocessing(scan, tmp_path):
+    path, image = scan
+    png = tmp_path / 'scan.png'
+    Image.fromarray(image).save(png)
+    np.testing.assert_array_equal(read_scan(png), read_scan(path))
+    np.testing.assert_array_equal(prepare_scan(read_scan(png)), prepare_scan(read_scan(path)))
+
+
+@pytest.mark.parametrize('shape', [(256, 256), (256, 256, 4), (128, 256, 3)])
+def test_png_rejects_preview_mask_alpha_or_wrong_size(tmp_path, shape):
+    path = tmp_path / 'unsupported.png'
+    Image.fromarray(np.zeros(shape, dtype=np.uint8)).save(path)
+    with pytest.raises(ValueError, match='256'):
+        read_scan(path)
 
 
 @pytest.mark.parametrize('shape,dtype', [((255, 256, 3), 'uint8'),

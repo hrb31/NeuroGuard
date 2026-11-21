@@ -36,10 +36,13 @@ verified weights are cached in memory for the process lifetime.
 
 ## Input and output
 
-Upload an **unmodified 256 × 256 × 3 uint8 LGG TIFF**, at most 4 MiB, one TIFF
-page. Use the image, not its binary `_mask.tif`. Stored channels are pre-contrast,
+Upload an **unmodified 256 × 256 × 3 uint8 LGG TIFF or lossless three-channel PNG export**, at most 4 MiB, one
+page/frame. Use the image, not its binary mask. Stored channels are pre-contrast,
 FLAIR, post-contrast, with the dataset's documented substitutions. These are MRI
-channels, not RGB colours. JPEG/PNG, DICOM, other sequences, volumes and arbitrary
+channels, not RGB colours. PNG exports must preserve all three stored channels exactly;
+grayscale FLAIR previews and masks are unsupported. The five local PNGs directly in
+`demo_samples/` are compatible; its `flair/` and `masks/` files are for viewing only.
+JPEG, DICOM, other sequences, volumes and arbitrary
 photographs are unsupported. The app checks structure, not medical provenance;
 the person uploading must confirm compatibility. Use only public, de-identified examples.
 
